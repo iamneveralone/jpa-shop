@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jpa-shop
+    username: shop_admin
+    password: q1w2e3
+
+jpa:
+  hibernate:
+    ddl-auto: create
+  show-sql: true
+  properties:
+    hibernate:
+      format_sql: true
