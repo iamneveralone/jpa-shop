@@ -32,6 +32,12 @@ public class Category {
 
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>();
+
+    //== 연관관계 메서드 ==//
+    public void addChildCategory(Category child){
+        this.child.add(child);
+        child.setParent(this);
+    }
 }
 // 다대다 경우에는 @JoinTable 을 사용하여 중간 테이블을 매핑해줘야 함
 // (참고) 실무에서는 @ManyToMany 사용하지 말자
