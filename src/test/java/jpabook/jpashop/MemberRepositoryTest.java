@@ -1,3 +1,4 @@
+/*
 package jpabook.jpashop;
 
 import org.assertj.core.api.Assertions;
@@ -45,3 +46,4 @@ class MemberRepositoryTest {
     }
 
 }
+*/

@@ -7,11 +7,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         # show_sql: true -> System.out 으로 출력
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 logging:
   level:
