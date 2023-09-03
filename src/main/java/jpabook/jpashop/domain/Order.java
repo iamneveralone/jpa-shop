@@ -50,6 +50,45 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+    //== 생성 메서드 ==// (= 정적 팩토리 메서드)
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems){
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    } // 생성자와 동일한 역할 (생성자와 달리 이름을 줄 수 있어 메서드의 의도를 명확하게 표현 가능)
+
+    //== 비즈니스 로직 ==//
+    /*주문 취소*/
+    public void cancel(){
+        if (delivery.getStatus() == DeliveryStatus.COMP){
+            throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다.");
+        }
+
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        } // ex) 고객이 한 번 주문할 때 2개 주문 가능 -> 2개의 orderItem 각각에도 cancel 필요
+    }
+
+    //== 조회 로직 ==//
+    /*전체 주문 가격 조회*/
+    public int getTotalPrice(){
+        /*int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice = orderItem.getTotalPrice(); // 각 orderItem 의 total price 를 가져옴
+        }
+        return totalPrice;*/
+        return orderItems.stream()
+                .mapToInt(OrderItem::getTotalPrice)
+                .sum();
+    }
 }
 // "cascade 옵션"
 
