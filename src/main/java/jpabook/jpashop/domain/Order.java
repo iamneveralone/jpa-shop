@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,6 +15,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Table(name = "orders")
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 다른 곳에서 Order 를 직접 생성하면 안 되고, 다른 방식으로 생성해야 되는구나를 알려주는 역할
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -104,3 +107,14 @@ public class Order {
 
 // 마찬가지로, 원래대로라면 delivery 직접 persist 해주고, 그 다음에 order 도 직접 각각 persist 해줘야 했음
 // cascade 옵션 사용하면, order 만 persist 해도 delivery 까지 같이 persist 호출됨
+
+// @NoArgsConstructor(access = AccessLevel.PROTECTED) 사용 이유?
+// @NoArgsConstructor 를 사용했다는 것은 즉 개발자가 파라미터를 받은 생성자를 임의로 만들었다는 뜻
+// 우리는 현재 Order 클래스에 '생성 메서드'를 만들었고, 이 메서드를 사용해서 추후에 Order 객체 생성할 것임
+// 그런데, 누군가는 new Order(); 형식을 통해 Order 객체를 생성하려는 시도를 할 가능성 있음
+// 그렇게 되면, Order 객체를 생성하는 2가지 방법이 혼용되어 사용되면서 유지 보수 측면에서 좋지 않음
+// -> 생성자의 접근 제어자를 protected 로 설정하면 다른 클래스에서 생성자 사용 불가
+//    (new Order(); 작성 시 빨간 밑줄 나타나면서 컴파일 오류 발생)
+
+// protected Order(){}
+// <=> @NoArgsConstructor(access = AccessLevel.PROTECTED)
