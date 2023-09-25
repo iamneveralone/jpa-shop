@@ -1,12 +1,15 @@
 package jpabook.jpashop.controller;
 
 import jpabook.jpashop.domain.item.Book;
+import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,6 +38,13 @@ public class ItemController {
         itemService.saveItem(book);
         return "redirect:/items"; // 저장된 책 목록으로 바로 갈 것임
     }
+
+    @GetMapping("/items")
+    public String list(Model model){
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
+        return "items/itemList";
+    }
 }
 // 동작 흐름
 // 1. /items/new 로 GET 요청이 들어오면, items/createItemForm.html 을 화면에 띄워줌
@@ -56,3 +66,8 @@ public class ItemController {
 // -> 'form' 이라는 이름으로 모델에 저장된 객체를 폼의 데이터 바인딩 대상으로 사용한다는 의미!
 // 만약 'form' 객체를 초기화하지 않는다면 다른 방식으로라도 'form' 객체를 초기화해야함
 // 그렇지 않으면 'form' 객체가 없어 폼의 데이터 바인딩이 실패하거나 예외 발생 가능
+
+// 회원 가입을 하거나 어떤 물건을 새로 등록할 때, 기존의 정보는 아무것도 입력되지 않은 상태여야 함
+// -> 이 때는 빈 객체를 생성하여 넘김 ex) model.addAttribute("form", new BookForm());
+// 반대로, 어떤 정보를 수정하고자 할 때는 기존의 정보가 화면에 출력된 상태여야 함
+// -> 기존 데이터들을 담고 있는 객체를 넘김 ex) model.addAttribute("items", items);
