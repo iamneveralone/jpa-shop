@@ -69,8 +69,9 @@ public class ItemController {
     public String updateItem(@ModelAttribute("form") BookForm form){
 
         // 수정된 정보가 담긴 BookForm 정보를 새로운 Book 객체에 옮겨담음
+        // 여기서 book 은 준영속 엔티티 (영속성 컨텍스트가 더는 관리X) -> JPA 가 관리하지 않음
         Book book = new Book();
-        book.setId(form.getId());
+        book.setId(form.getId()); // new 로 생성하기 했지만, id 를 갖게 됨(이전에 JPA 에 의해 DB 에 한 번 저장되었던 걸 불러온 느낌) -> 준영속 엔티티
         book.setName(form.getName());
         book.setPrice(form.getPrice());
         book.setStockQuantity(form.getStockQuantity());

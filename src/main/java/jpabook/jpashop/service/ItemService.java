@@ -1,5 +1,6 @@
 package jpabook.jpashop.service;
 
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,20 @@ public class ItemService {
     public void saveItem(Item item){
         itemRepository.save(item);
     }
+
+    @Transactional
+    public void updateItem(Long itemId, Book param){
+        Item findItem = itemRepository.findOne(itemId);
+
+        findItem.setName(param.getName());
+        findItem.setPrice(param.getPrice());
+        findItem.setStockQuantity(param.getStockQuantity());
+    }
+    // 영속성 컨텍스트에서 엔티티를 다시 조회한 후에 데이터를 수정하는 방법
+    // 트랜잭션 안에서 엔티티 다시 조회, 변경할 값 선택
+    // -> 트랜잭션 commit 시점에 JPA 가 flush 를 날리면서 변경된 것들을 다 찾음
+    // -> 즉, 변경 감지(Dirty Checking) 동작해서 DB 에 UPDATE SQL 실행
+    // -> 따라서 itemRepository.save(findItem) 해줄 필요X
 
     public List<Item> findItems(){
         return itemRepository.findAll();
@@ -48,3 +63,11 @@ public class ItemService {
 // 1. 클라이언트로부터 타겟을 대신해서 요청을 받는 대리인
 // 2. 실제 오브젝트인 타겟은 프록시를 통해 최종적으로 요청받아 처리함
 // 3. 따라서 타겟은 자신의 기능에만 집중하고 부가기능은 프록시에게 위임함
+
+// 변경 감지 vs 병합(merge)
+// (주의) 변경 감지 기능 사용하면 원하는 속성만 선택해서 변경할 수 있지만
+// merge 사용하면 모든 속성이 변경됨, 병합 시 값이 없으면 null 로 업데이트할 위험 존재 (병합은 모든 필드 교체)
+// Ex) Item 가격은 무조건 고정이라는 조건이 주어지면, ItemController 의 updateItem 메서드에서 book.setPrice(form.getPrice()) 코드 사용X
+//     그런데, 이 상태에서 merge 를 하면 book 객체의 price 필드에 null 값이 들어가게 됨
+
+// -> merge 말고 '변경 감지'를 사용해서 업데이트하려는 필드에만 setXXX 사용하자! (사실 setter 도 거의 사용 말고, 의미 있는 메서드를 직접 만들어 사용하자)
