@@ -22,12 +22,12 @@ public class ItemService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, Book param){
+    public void updateItem(Long itemId, String name, int price, int stockQuantity){
         Item findItem = itemRepository.findOne(itemId);
 
-        findItem.setName(param.getName());
-        findItem.setPrice(param.getPrice());
-        findItem.setStockQuantity(param.getStockQuantity());
+        findItem.setName(name);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
     }
     // 영속성 컨텍스트에서 엔티티를 다시 조회한 후에 데이터를 수정하는 방법
     // 트랜잭션 안에서 엔티티 다시 조회, 변경할 값 선택

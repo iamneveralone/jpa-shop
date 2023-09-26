@@ -66,19 +66,26 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") BookForm form){
+    public String updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute("form") BookForm form){
 
         // 수정된 정보가 담긴 BookForm 정보를 새로운 Book 객체에 옮겨담음
         // 여기서 book 은 준영속 엔티티 (영속성 컨텍스트가 더는 관리X) -> JPA 가 관리하지 않음
-        Book book = new Book();
+        /*Book book = new Book();
         book.setId(form.getId()); // new 로 생성하기 했지만, id 를 갖게 됨(이전에 JPA 에 의해 DB 에 한 번 저장되었던 걸 불러온 느낌) -> 준영속 엔티티
         book.setName(form.getName());
         book.setPrice(form.getPrice());
         book.setStockQuantity(form.getStockQuantity());
         book.setAuthor(form.getAuthor());
         book.setIsbn(form.getIsbn());
+        itemService.saveItem(book);*/ // 타고 들어가면 itemRepository 의 save 메서드에서 기존에 DB 에 해당 item 이 존재하는 경우에 em.merge(item) 실행
 
-        itemService.saveItem(book); // 타고 들어가면 itemRepository 의 save 메서드에서 기존에 DB 에 해당 item 이 존재하는 경우에 em.merge(item) 실행
+        // 더 좋은 방법
+        // (1) 컨트롤러에서 어설프게 엔티티 생성하지 말자
+        // (2) 트랜잭션이 있는 서비스 계층에 식별자(id)와 변경할 데이터를 명확하게 전달하자(파라미터 or dto)
+        // (3) 트랜잭션이 있는 서비스 계층에서 영속 상태의 엔티티를 조회하고, 엔티티의 데이터를 직접 변경하자
+        // (4) 트랜잭션 커밋 시점에 변경 감지가 실행된다
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+
         return "redirect:/items";
     }
 }
