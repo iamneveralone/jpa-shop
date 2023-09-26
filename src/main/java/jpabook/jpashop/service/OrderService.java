@@ -8,6 +8,7 @@ import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,10 +66,10 @@ public class OrderService {
     // -> JPA 활용하면 데이터 변경만 해도, JPA 가 변경 내역 감지(Dirty checking)를 통해 알아서 UPDATE 문을 DB에 날려줌
 
     /*검색*/
-    /*@Transactional
+    @Transactional
     public List<Order> findOrders(OrderSearch orderSearch){
-
-    }*/
+        return orderRepository.findAllByString(orderSearch);
+    }
 }
 // 단순히 A -> B 관계가 CASCADE 로 되어 있으면
 // A 엔티티를 persist 할 때, B 엔티티도 연쇄해서 함께 persist
